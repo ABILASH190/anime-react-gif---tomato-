@@ -11,40 +11,35 @@ from telegram.ext import (
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# ================= GIF / VIDEO DATABASE =================
+# ================= SAFE MP4 LINKS =================
 GIFS = {
-    # Interactive
-    "hug": ["https://media.tenor.com/7XK0tZx6d5AAAAAC/anime-hug.mp4"],
-    "slap": ["https://media.tenor.com/3z8JxY8XyQAAAAAC/anime-slap.mp4"],
-    "kiss": ["https://media.tenor.com/9zG8KxH2lXAAAAAC/anime-kiss.mp4"],
-    "pat": ["https://media.tenor.com/Lb8cQY5Z1N8AAAAC/anime-pat.mp4"],
-    "punch": ["https://media.tenor.com/7dM4Z3Zl3kAAAAAC/anime-punch.mp4"],
-
-    # Express
-    "cry": ["https://media.tenor.com/8tG0cPqjN1EAAAAC/anime-cry.mp4"],
-    "laugh": ["https://media.tenor.com/5X8y4k6vP5EAAAAC/anime-laugh.mp4"],
-    "smile": ["https://media.tenor.com/wF8qvN8Rk9kAAAAC/anime-smile.mp4"],
-    "angry": ["https://media.tenor.com/8YvYy8fZk7kAAAAC/anime-angry.mp4"],
-
-    # Anime attacks
-    "rasengan": ["https://media.tenor.com/VHn8z2k5N-AAAAAC/rasengan-naruto.mp4"],
-    "chidori": ["https://media.tenor.com/VZ7Yzj6f1cQAAAAC/chidori-sasuke.mp4"],
-    "amaterasu": ["https://media.tenor.com/sq2wT8wA5VgAAAAC/amaterasu-itachi.mp4"],
-    "bankai": ["https://media.tenor.com/0KJv8vZ8FJcAAAAC/bankai-bleach.mp4"]
+    "cry": [
+        "https://files.catbox.moe/7w1z5k.mp4"
+    ],
+    "hug": [
+        "https://files.catbox.moe/2x3k9v.mp4"
+    ],
+    "rasengan": [
+        "https://files.catbox.moe/1l4e2s.mp4"
+    ]
 }
 
-INTERACTIVE = ["hug", "slap", "kiss", "pat", "punch"]
-EXPRESS = ["cry", "laugh", "smile", "angry"]
-ATTACKS = ["rasengan", "chidori", "amaterasu", "bankai"]
+INTERACTIVE = ["hug"]
+EXPRESS = ["cry"]
+ATTACKS = ["rasengan"]
 
 # ================= /start =================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("➕ Add me to group", url=f"https://t.me/{context.bot.username}?startgroup=true")]
+        [InlineKeyboardButton(
+            "➕ Add me to group",
+            url=f"https://t.me/{context.bot.username}?startgroup=true"
+        )]
     ])
+
     await update.message.reply_text(
-        "🤖 Anime Reaction Bot is online!\n\n"
-        "Use commands like:\n"
+        "🤖 Anime Reaction Bot is ONLINE!\n\n"
+        "Commands:\n"
         "+cry\n"
         "+hug (reply)\n"
         "+rasengan (reply)",
@@ -60,25 +55,34 @@ async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     command = msg.text[1:].lower()
     user = msg.from_user.first_name
 
+    # Express
+    if command in EXPRESS:
+        video = random.choice(GIFS[command])
+        await context.bot.send_video(
+            chat_id=msg.chat.id,
+            video=video,
+            caption=f"💭 {user} is crying"
+        )
+
     # Interactive
-    if command in INTERACTIVE and msg.reply_to_message:
+    elif command in INTERACTIVE and msg.reply_to_message:
         target = msg.reply_to_message.from_user.first_name
         video = random.choice(GIFS[command])
-        caption = f"💞 {user} {command}ed {target}"
-        await context.bot.send_video(msg.chat.id, video=video, caption=caption)
-
-    # Express
-    elif command in EXPRESS:
-        video = random.choice(GIFS[command])
-        caption = f"💭 {user} is {command}"
-        await context.bot.send_video(msg.chat.id, video=video, caption=caption)
+        await context.bot.send_video(
+            chat_id=msg.chat.id,
+            video=video,
+            caption=f"💞 {user} hugged {target}"
+        )
 
     # Attacks
     elif command in ATTACKS and msg.reply_to_message:
         target = msg.reply_to_message.from_user.first_name
         video = random.choice(GIFS[command])
-        caption = f"💥 {user} used {command.upper()} on {target}!"
-        await context.bot.send_video(msg.chat.id, video=video, caption=caption)
+        await context.bot.send_video(
+            chat_id=msg.chat.id,
+            video=video,
+            caption=f"💥 {user} used RASENGAN on {target}!"
+        )
 
 # ================= MAIN =================
 if __name__ == "__main__":
@@ -87,5 +91,5 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT, reaction_handler))
 
-    print("Bot is running...")
+    print("Bot started successfully")
     app.run_polling()
