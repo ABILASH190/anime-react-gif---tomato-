@@ -99,8 +99,36 @@ ATTACKS = [
 # ===== HANDLER =====
 async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = update.message
-    if not msg or not msg.text or not msg.text.startswith("+"):
+    if not msg or not msg.text:
         return
+
+    text = msg.text.strip()
+    if not text.startswith("+"):
+        return
+
+    command = text[1:].lower()
+    user = msg.from_user.first_name
+
+    # Interactive (need reply)
+    if command in INTERACTIVE and msg.reply_to_message:
+        target = msg.reply_to_message.from_user.first_name
+        gif = random.choice(GIFS.get(command, []))
+        caption = f"💞 {user} {command}ed {target}"
+        await context.bot.send_animation(chat_id=msg.chat.id, animation=gif, caption=caption)
+
+    # Express (no reply needed)
+    elif command in EXPRESS:
+        gif = random.choice(GIFS.get(command, []))
+        caption = f"💭 {user} is {command}"
+        await context.bot.send_animation(chat_id=msg.chat.id, animation=gif, caption=caption)
+
+    # Attacks (need reply)
+    elif command in ATTACKS and msg.reply_to_message:
+        target = msg.reply_to_message.from_user.first_name
+        gif = random.choice(GIFS.get(command, []))
+        caption = f"💥 {user} used **{command.upper()}** on {target}!"
+        await context.bot.send_animation(chat_id=msg.chat.id, animation=gif, caption=caption)
+
 
     command = msg.text[1:].lower()
     user = msg.from_user.first_name
@@ -135,5 +163,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 keep_alive()
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
-app.add_handler(MessageHandler(filters.TEXT & (filters.ChatType.GROUPS | filters.ChatType.PRIVATE), reaction_handler))
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & (~filters.COMMAND),  # handle all text except /commands
+        reaction_handler
+    )
+)
+
 app.run_polling()
