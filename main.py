@@ -1,15 +1,15 @@
 import os
 import random
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, ContextTypes, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 from keep_alive import keep_alive
 
-# ======= BOT TOKEN =======
+# ===== BOT TOKEN =====
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# ======= GIF DATABASE =======
+# ===== GIF DATABASE =====
 GIFS = {
-    # Interactive
+    # Interactive commands
     "bite": ["https://media.tenor.com/1.gif"],
     "bonk": ["https://media.tenor.com/2.gif"],
     "cuddle": ["https://media.tenor.com/3.gif"],
@@ -30,7 +30,7 @@ GIFS = {
     "spank": ["https://media.tenor.com/18.gif"],
     "grape": ["https://media.tenor.com/19.gif"],
 
-    # Anime Fighting / Attacks
+    # Anime Attacks
     "counter": ["https://media.tenor.com/20.gif"],
     "bankai": ["https://media.tenor.com/21.gif"],
     "revive": ["https://media.tenor.com/22.gif"],
@@ -42,7 +42,7 @@ GIFS = {
     "getsuga": ["https://media.tenor.com/28.gif"],
     "bankai2": ["https://media.tenor.com/29.gif"],
 
-    # Express yourself
+    # Express Yourself
     "baka": ["https://media.tenor.com/30.gif"],
     "blush": ["https://media.tenor.com/31.gif"],
     "clap": ["https://media.tenor.com/32.gif"],
@@ -79,7 +79,6 @@ GIFS = {
     "cringe": ["https://media.tenor.com/63.gif"]
 }
 
-# ======= COMMAND GROUPS =======
 INTERACTIVE = [
     "bite","bonk","cuddle","hug","kick","kill","kiss","lick","pat","poke",
     "punch","slap","tickle","feed","pinch","proud","bully","spank","grape"
@@ -97,7 +96,7 @@ ATTACKS = [
     "chidori","kamehameha","getsuga","bankai2"
 ]
 
-# ======= HANDLER =======
+# ===== HANDLER =====
 async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = update.message
     if not msg or not msg.text or not msg.text.startswith("+"):
@@ -126,13 +125,13 @@ async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption = f"💥 {user} used **{command.upper()}** on {target}!"
         await context.bot.send_animation(chat_id=msg.chat.id, animation=gif, caption=caption)
 
-# ======= /start COMMAND =======
+# ===== /start =====
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "👋 Hello! I am Anime Reaction Bot!\nUse +commands like +hug, +rasengan, +cry etc."
     )
 
-# ======= START BOT =======
+# ===== Start Bot =====
 keep_alive()
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 app.add_handler(CommandHandler("start", start))
