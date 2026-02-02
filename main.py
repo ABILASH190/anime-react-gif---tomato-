@@ -179,7 +179,6 @@ if __name__ == '__main__':
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), reaction_handler))
     app.add_handler(CallbackQueryHandler(help_button, pattern="help"))
 if __name__ == "__main__":
-    keep_alive()
     app.run_polling()
 
         )]
