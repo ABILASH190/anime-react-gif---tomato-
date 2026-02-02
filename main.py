@@ -3,7 +3,6 @@ import random
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, ContextTypes, filters
-from keep_alive import keep_alive
 from telegram.ext import CallbackQueryHandler
 
 async def help_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
