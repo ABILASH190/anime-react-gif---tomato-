@@ -181,8 +181,8 @@ if __name__ == '__main__':
 if __name__ == "__main__":
     app.run_polling()
 
-        )]
-    ])
+        )
+    
 
     await update.message.reply_text(
         "🤖 Anime Reaction Bot is ONLINE!\n\n"
